@@ -1,0 +1,31 @@
+services:
+  backend-jobtrackerpro-db:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jobtrackerpro
+    healthcheck:
+      test: ['CMD', 'pg_isready', '--username=postgres', '--dbname=jobtrackerpro']
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: masoud
+      MINIO_ROOT_PASSWORD: Strong#Pass#2022
+    command: server --console-address ":9001" /data
+
+volumes:
+  db-data:
+  minio_storage: {}
