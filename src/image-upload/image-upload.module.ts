@@ -7,7 +7,6 @@ import { ImageUploadService } from './image-upload.service';
   imports: [MinioClientModule],
   controllers: [ImageUploadController],
   providers: [ImageUploadService],
+  exports: [ImageUploadService],
 })
-export class ImageUploadModule {
-  '';
-}
+export class ImageUploadModule {}

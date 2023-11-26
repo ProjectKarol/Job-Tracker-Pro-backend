@@ -8,6 +8,9 @@ const UpdateJobDtoSchema = z
     url: z.string().optional(),
     company: z.string().optional(),
     experience: z.string().optional(),
+    image_url: z.string().optional(),
+    doIApplied: z.boolean().optional(),
+    JobAdditionalInfo: z.string().optional(),
   })
   .strict();
 

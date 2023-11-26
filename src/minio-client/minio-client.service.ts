@@ -22,7 +22,7 @@ export class MinioClientService {
             's3:GetBucketLocation',
             's3:ListBucket',
           ],
-          Resource: ['arn:aws:s3:::test-bucket'], // Change this according to your bucket name
+          Resource: [`arn:aws:s3:::${process.env.MINIO_BUCKET_NAME}`], // Change this according to your bucket name
         },
         {
           Effect: 'Allow',
@@ -36,7 +36,7 @@ export class MinioClientService {
             's3:GetObject',
             's3:ListMultipartUploadParts',
           ],
-          Resource: ['arn:aws:s3:::test-bucket/*'], // Change this according to your bucket name
+          Resource: [`arn:aws:s3:::${process.env.MINIO_BUCKET_NAME}/*`], // Change this according to your bucket name
         },
       ],
     };
@@ -103,6 +103,15 @@ export class MinioClientService {
     return {
       url: `${process.env.MINIO_ENDPOINT}:${process.env.MINIO_PORT}/${process.env.MINIO_BUCKET_NAME}/${fileName}`,
     };
+  }
+
+  public async get(objetName: string, bucketName: string = this.bucketName) {
+    const url = await this.client.presignedGetObject(
+      bucketName,
+      objetName,
+      24 * 60 * 60,
+    );
+    return url;
   }
 
   async delete(objetName: string, bucketName: string = this.bucketName) {

@@ -9,6 +9,8 @@ const CreateJobDtoSchema = z
     url: z.string(),
     company: z.string(),
     experience: z.string(),
+    doIApplied: z.boolean(),
+    JobAdditionalInfo: z.string(),
   })
   .strict();
 
@@ -16,3 +18,9 @@ const CreateJobDtoSchema = z
 export class CreateJobDto extends createZodDto(CreateJobDtoSchema) {
   '';
 }
+
+export type Schema = z.infer<typeof CreateJobDtoSchema>;
+
+const testObjec: Schema = {};
+
+console.log(testObjec);

@@ -18,5 +18,14 @@ export class Job {
   company: string;
 
   @Column()
+  image_url: string;
+
+  @Column()
   experience: string;
+
+  @Column()
+  doIApplied: boolean;
+
+  @Column()
+  JobAdditionalInfo: string;
 }

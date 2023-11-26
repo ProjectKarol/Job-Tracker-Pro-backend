@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   UsePipes,
+  Req,
 } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { ZodValidationPipe } from 'nestjs-zod';
+import { Request } from 'express';
 
 @Controller('jobs')
 export class JobsController {
@@ -22,13 +24,12 @@ export class JobsController {
   @UsePipes(ZodValidationPipe)
   @Post()
   create(@Body() createJobDto: CreateJobDto) {
-    console.log('xxx', createJobDto);
     return this.jobsService.create(createJobDto);
   }
 
   @Get()
-  findAll() {
-    return this.jobsService.findAll();
+  findAll(@Req() req: Request) {
+    return this.jobsService.findAll(req);
   }
 
   @Get(':id')

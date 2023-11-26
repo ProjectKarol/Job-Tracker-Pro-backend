@@ -16,4 +16,22 @@ export class ImageUploadService {
       message: 'Image upload successful',
     };
   }
+
+  async deleteImage(image_url: string) {
+    const deleted_image = await this.minioClientService.delete(image_url);
+
+    return {
+      image_url: deleted_image,
+      message: 'Image delete successful',
+    };
+  }
+
+  async getImage(image_url: string) {
+    const image = await this.minioClientService.get(image_url);
+
+    return {
+      image_url: image,
+      message: 'Image get successful',
+    };
+  }
 }
