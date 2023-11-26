@@ -5,14 +5,7 @@ import { join } from 'path';
 
 @Controller('screenshot')
 export class ScreenshotController {
-  constructor(private readonly screenshotService: ScreenshotService) {
-    ('');
-  }
-
-  @Get()
-  createScreens(): Promise<void> {
-    return this.screenshotService.createScreenshot();
-  }
+  constructor(private readonly screenshotService: ScreenshotService) {}
 
   @Get('get')
   getScreenshot(): string {

@@ -3,48 +3,16 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { Job } from './entities/job.entity';
 import dataSource from '../database/typeOrm.config';
-import puppeteer from 'puppeteer';
-import { ImageUploadService } from '../image-upload/image-upload.service';
-import { AppMimeType } from '../minio-client/file.model';
 import { ScreenshotService } from '../screenshot/screenshot.service';
+import { ImageUploadService } from '../image-upload/image-upload.service';
 
 @Injectable()
 export class JobsService {
-  @Inject(ImageUploadService)
   @Inject(ScreenshotService)
-  private readonly imageUploadService: ImageUploadService;
   private readonly screenshotService: ScreenshotService;
 
-  makeScreenshot = async () => {
-    console.log('makeScreenshot');
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(
-      'https://justjoin.it/offers/sea-lead-frontend-engineer-gdansk',
-      // 'http://localhost:3000/',
-    );
-    // await page.screenshot({ path: 'assets/example1.png' });
-    const screenshot = await page.screenshot();
-    const bufferedFile = {
-      fieldname: 'screenshot', // Name of the form field associated with this file
-      originalname: 'screenshot.png', // Original file name
-      encoding: '7bit', // Encoding type of the file
-      size: screenshot.length, // Size of the file
-      mimetype: 'image/png' as AppMimeType, // MIME type of the file
-      buffer: screenshot, // The actual buffer from Puppeteer's screenshot
-      // Add any other properties that are required by your BufferedFile type
-    };
-    // Get text from the first h1 tag
-    const h1Text = await page.evaluate(() => {
-      const h1 = document.querySelector('h1');
-      return h1 ? h1.innerText : null;
-    });
-    console.log('h1Text', h1Text);
-    const uploadImage = await this.imageUploadService.uploadImage(bufferedFile);
-    console.log('uploadImage', uploadImage);
-    await browser.close();
-    return uploadImage;
-  };
+  @Inject(ImageUploadService)
+  private readonly imageUploadService: ImageUploadService;
 
   extractImageName(url: string): string {
     const parts = url.split('/');
@@ -52,7 +20,7 @@ export class JobsService {
   }
 
   async create(createJobDto: CreateJobDto) {
-    const image_url = await this.makeScreenshot();
+    const image_url = await this.screenshotService.scrapingJob();
 
     const userRepository = dataSource.getRepository(Job);
     await userRepository.save({
@@ -80,20 +48,23 @@ export class JobsService {
   }
 
   async update(id: number, updateJobDto: UpdateJobDto) {
-    console.log('id', id);
     const userRepository = dataSource.getRepository(Job);
     const job = await userRepository.findOneBy({
       id: id,
     });
-    console.log('job update', job);
     return userRepository.save({
       ...job, // existing fields
       ...updateJobDto, // updated fields
     });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     const userRepository = dataSource.getRepository(Job);
+    const job = await userRepository.findOneBy({
+      id: id,
+    });
+
+    this.imageUploadService.deleteImage(job.image_url);
     return userRepository.delete(id);
   }
 }

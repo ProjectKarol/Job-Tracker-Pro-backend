@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { JobsController } from './jobs.controller';
-import { ImageUploadModule } from '../image-upload/image-upload.module';
 import { ScreenshotModule } from '../screenshot/screenshot.module';
+import { ImageUploadModule } from '../image-upload/image-upload.module';
 
 @Module({
-  imports: [ImageUploadModule, ScreenshotModule],
+  imports: [ScreenshotModule, ImageUploadModule],
   controllers: [JobsController],
   providers: [JobsService],
 })
